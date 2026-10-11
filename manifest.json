@@ -1,0 +1,26 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "cuentasclaras123.netlify",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "cuentasclaras123.netlify",
+  "start_url": "/",
+  "theme_color": "#3548d4",
+  "icons": [
+    {
+      "src": "https://cuentasclaras123.netlify.app/favicon.ico",
+      "type": "image/x-icon",
+      "isSquare": false,
+      "isPng": false,
+      "isWebp": false,
+      "isJpg": false,
+      "width": 0,
+      "is512x512": false,
+      "is256x256": false,
+      "is192x192": false
+    }
+  ],
+  "description": "Cuentas Claras"
+}
