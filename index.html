@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cuentas claras</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+</head><body>
+
+<section id="auth" class="hide">
+ <div class="auth-card">
+  <div class="brand"><span class="logo">€</span>Cuentas claras</div>
+  <h1>Tu mes, bajo control</h1>
+  <p class="mut">Pon un límite a cada gasto y comprueba cuánto te sobra.</p>
+  <div class="seg"><button id="tabL" class="on" onclick="authMode(0)">Iniciar sesión</button><button id="tabR" onclick="authMode(1)">Registrarme</button></div>
+  <div id="fNombre" class="hide"><label>Nombre de usuario<input id="aNombre" maxlength="20" autocomplete="username"></label></div>
+  <label>Correo electrónico<input id="aEmail" type="email" autocomplete="email"></label>
+  <label>Contraseña<input id="aPass" type="password" minlength="6" autocomplete="current-password"></label>
+  <p id="msg" role="alert"></p>
+  <button id="aGo" class="wide" onclick="authGo()">Entrar</button>
+ </div>
+</section>
+
+<div id="app" class="hide">
+ <nav>
+  <div class="brand"><span class="logo">€</span>Cuentas claras</div>
+  <button data-v="resumen" class="on">Resumen</button>
+  <button data-v="stats">Estadísticas</button>
+  <button data-v="hist">Meses anteriores</button>
+  <button data-v="rank">Ranking</button>
+  <button data-v="admin" id="navAdmin" class="hide">Administración</button>
+  <div class="sp"></div>
+  <button data-v="conf" class="out">Configuración</button>
+ </nav>
+ <main>
+  <div id="simbar" class="hide"></div>
+  <section id="v-resumen">
+   <div class="head"><h2 id="titulo"></h2><button class="sec" onclick="incomeForm()">Modificar ingresos del mes</button></div>
+   <div class="kpis" id="kpis"></div>
+   <div class="box"><div class="boxhead"><h3>Gastos</h3><button onclick="catForm('gasto')">+ Añadir gasto</button></div><table id="tG"></table></div>
+   <div class="box"><div class="boxhead"><h3>Ingresos adicionales</h3><button onclick="catForm('ingreso')">+ Añadir ingreso</button></div><table id="tI"></table></div>
+  </section>
+  <section id="v-stats" class="hide"><h2>Estadísticas</h2>
+   <div class="grid2"><div class="box"><h3>Límite vs. gastado (este mes)</h3><canvas id="c1"></canvas></div><div class="box"><h3>Reparto del gasto</h3><canvas id="c2"></canvas></div></div>
+   <div class="box"><h3>Histórico mensual</h3><canvas id="c3"></canvas></div>
+  </section>
+  <section id="v-hist" class="hide"><div class="head"><h2>Meses anteriores</h2><select id="hSel" class="hide"></select></div><div id="hBody"></div></section>
+  <section id="v-conf" class="hide"><h2>Configuración</h2>
+   <div class="conf">
+    <div class="box"><h3>Nombre de usuario</h3><input id="cNombre" maxlength="20" autocomplete="username"><p id="mNombre" class="fmsg"></p><button onclick="saveNombre()">Guardar nombre</button></div>
+    <div class="box"><h3>Correo electrónico</h3><input id="cEmail" type="email" autocomplete="email"><p id="mEmail" class="fmsg"></p><button onclick="saveEmail()">Cambiar correo</button><p class="mut small">Recibirás un enlace de verificación. El correo no cambia hasta que lo confirmes.</p></div>
+    <div class="box"><h3>Contraseña</h3>
+     <label>Contraseña actual<input id="cPA" type="password" autocomplete="current-password"></label>
+     <label>Nueva contraseña<input id="cPN" type="password" minlength="6" autocomplete="new-password"></label>
+     <label>Repite la nueva contraseña<input id="cPR" type="password" autocomplete="new-password"></label>
+     <p id="mPass" class="fmsg"></p><button onclick="savePass()">Cambiar contraseña</button></div>
+    <div class="box"><h3>Ranking</h3><label class="switch"><input type="checkbox" id="chRank"><span>Aparecer en el ranking</span></label></div>
+    <div class="box"><h3>Sesión</h3><button class="del" onclick="sb.auth.signOut()">Cerrar sesión</button></div>
+   </div>
+  </section>
+  <section id="v-admin" class="hide"><h2>Administración</h2>
+   <p id="aMsg" class="fmsg" role="status"></p>
+   <div class="box"><h3>Fecha de mi cuenta</h3><p class="mut small">Simula otra fecha para probar el cambio de mes. Solo afecta a tu cuenta.</p>
+    <div class="tools"><input id="aFecha" type="date" style="width:auto;margin:0"><button onclick="setFecha()">Aplicar fecha</button><button class="sec" onclick="fechaReal()">Volver a la fecha real</button></div></div>
+   <div class="box"><h3>Herramientas de prueba</h3><div class="tools">
+    <button class="sec" onclick="demo()">Crear mes anterior con datos de ejemplo</button>
+    <button class="sec" onclick="borrarMes()">Borrar mi mes actual (regenerar)</button>
+    <button class="sec" onclick="probarCorreo()">Enviarme el correo de resumen</button></div></div>
+   <div class="box"><div class="boxhead"><h3>Comprobaciones</h3><button onclick="comprobar()">Ejecutar</button></div><ul id="aChk"></ul></div>
+   <div class="box"><h3>Usuarios</h3><table id="aUsers"></table></div>
+  </section>
+  <section id="v-rank" class="hide"><h2>Ranking del mes</h2><p class="mut">Puntuación: media entre el % de presupuesto respetado y el % de ingresos ahorrado.</p><div class="box"><table id="tR"></table></div></section>
+ </main>
+</div>
+<dialog id="dlg"></dialog>
+<script src="app.js"></script>
+</body></html>
