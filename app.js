@@ -28,7 +28,14 @@ sb.auth.getSession().then(({data})=>{if(!data.session)$('auth').classList.remove
 async function boot(){
  $('auth').classList.add('hide');
  const {data:u}=await sb.from('usuarios').select('*').eq('id',S.user.id).single();S.perfil=u;if(u)aplicaFecha(u);if(u&&u.email!==S.user.email){await sb.from('usuarios').update({email:S.user.email}).eq('id',S.user.id);u.email=S.user.email}
- if(!u)return alert('No se encontró tu perfil. ¿Ejecutaste schema.sql?');
+ if(!u){
+  // Sesión inválida o sin perfil: se borra y se vuelve al login
+  await sb.auth.signOut({scope:'local'}).catch(()=>{});
+  S.user=null;S.perfil=null;
+  $('app').classList.add('hide');$('auth').classList.remove('hide');
+  $('msg').textContent='Tu sesión ya no es válida. Inicia sesión de nuevo.';
+  return;
+ }
  $('chRank').checked=u.en_ranking;
  const {data:m}=await sb.from('meses').select('*').eq('mes',MES).maybeSingle();
  $('app').classList.remove('hide');
