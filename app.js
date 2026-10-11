@@ -141,6 +141,7 @@ async function arrastrar(id,v){await sb.from('categorias').update({arrastrar:v})
 // ---------- Navegación, estadísticas y ranking ----------
 document.querySelectorAll('nav [data-v]').forEach(b=>b.onclick=()=>{
  document.querySelectorAll('nav [data-v]').forEach(x=>x.classList.toggle('on',x===b));
+ b.scrollIntoView&&b.scrollIntoView({inline:'center',block:'nearest'});
  ['resumen','stats','rank','hist','conf','admin'].forEach(v=>$('v-'+v).classList.toggle('hide',v!==b.dataset.v));
  if(b.dataset.v==='stats')stats();if(b.dataset.v==='rank')rank();if(b.dataset.v==='hist')hist();if(b.dataset.v==='conf')conf();if(b.dataset.v==='admin')admin()});
 $('chRank').onchange=async e=>{await sb.from('usuarios').update({en_ranking:e.target.checked}).eq('id',S.user.id)};
@@ -173,7 +174,7 @@ async function hist(){
  const {data:ms}=await sb.from('meses').select('*').lt('mes',MES).order('mes',{ascending:false});
  if(!ms||!ms.length){$('hSel').classList.add('hide');$('hBody').innerHTML='<div class="box mut">Todavía no hay meses anteriores. Aparecerán aquí cuando empiece el mes siguiente.</div>';return}
  S.hms=ms;$('hSel').classList.remove('hide');
- $('hSel').innerHTML=ms.map(m=>`<option value="${m.id}">${new Date(m.mes+'T00:00:00').toLocaleDateString('es-ES',{month:'long',year:'numeric'})}</option>`).join('');
+ $('hSel').innerHTML=ms.map(m=>`<option value="${m.id}">${new Date(m.mes+'T00:00:00').toLocaleDateString('es-ES',{month:'long',year:'numeric'}).replace(/^./,c=>c.toUpperCase())}</option>`).join('');
  $('hSel').onchange=histMonth;histMonth();
 }
 async function histMonth(){
@@ -246,3 +247,16 @@ async function comprobar(){const out=[],ok=(t,b,x)=>out.push(`<li class="${b?'ok
  const a4=await sb.rpc('ranking');ok('Función del ranking',!a4.error,a4.error&&a4.error.message);
  const a5=await sb.rpc('admin_usuarios');ok('Funciones de administración',!a5.error,a5.error&&a5.error.message);
  $('aChk').innerHTML=out.join('')}
+
+// ---------- Vista móvil: las tablas se muestran como tarjetas ----------
+// Copia el texto de cada cabecera (th) en las celdas de su columna (data-l) para poder mostrarlo como etiqueta.
+function etiquetar(){
+ document.querySelectorAll('main table').forEach(t=>{
+  const rows=[...t.querySelectorAll('tr')],hr=rows.find(r=>r.querySelector('th'));if(!hr)return;
+  hr.classList.add('hr');const h=[...hr.children].map(x=>x.textContent.trim());
+  rows.forEach(r=>{if(r===hr)return;[...r.children].forEach((td,i)=>{
+   if(td.colSpan>1||!h[i])td.removeAttribute('data-l');else td.dataset.l=h[i];
+   td.classList.toggle('full',!!td.querySelector('.bar,label,.acts,button')||/correo|nota|descrip/i.test(h[i]||''))});
+   r.classList.toggle('vacio',r.children.length===1&&r.children[0].colSpan>1&&!r.classList.contains('movs'))})})}
+let _et;new MutationObserver(()=>{cancelAnimationFrame(_et);_et=requestAnimationFrame(etiquetar)}).observe(document.querySelector('main'),{childList:true,subtree:true});
+etiquetar();

@@ -93,3 +93,85 @@ tr.movs td{background:#f8f9fc!important;color:var(--ink)!important;padding:.4rem
 
 #simbar{background:#fff3cd;color:#7a5200;padding:.65rem 1rem;border-radius:10px;margin-bottom:1rem;font-weight:600}
 .tools{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}#aChk{list-style:none;padding:0;margin:0}#aChk li{padding:.25rem 0}
+
+/* ===== Móvil ===== */
+body{-webkit-tap-highlight-color:transparent}
+#titulo,.head select{text-transform:none}
+.grid2{grid-template-columns:repeat(auto-fit,minmax(min(310px,100%),1fr))}
+.boxhead{flex-wrap:wrap}
+@media(max-width:800px){
+  /* Evita el zoom automático de iPhone al tocar un campo y facilita pulsar */
+  input,select{font-size:16px;font-weight:400}
+  button{min-height:42px}
+
+  /* Menú: barra inferior que se desliza, como en una app */
+  #app{display:block}
+  nav{position:fixed;left:0;right:0;bottom:0;top:auto;height:auto;z-index:20;flex-direction:row;flex-wrap:nowrap;align-items:center;gap:.15rem;overflow-x:auto;scrollbar-width:none;
+      padding:.4rem .5rem calc(.4rem + env(safe-area-inset-bottom,0px));border-right:0;border-top:1px solid var(--line);box-shadow:0 -4px 16px #10182810}
+  nav::-webkit-scrollbar{display:none}
+  nav .brand{display:none}
+  nav button{flex:0 0 auto;white-space:nowrap;text-align:center;padding:.55rem .85rem;font-size:.85rem}
+  nav .out{border:0;margin:0}
+  main{padding:calc(1.1rem + env(safe-area-inset-top,0px)) 1rem calc(5.5rem + env(safe-area-inset-bottom,0px))}
+  h1{font-size:1.45rem}h2{font-size:1.3rem;margin-bottom:.9rem}
+  .head{gap:.7rem}.head select{min-width:0;width:100%}
+  .head>button,.head>.tools{width:100%}.head>.tools>*{flex:1}
+  .tools>button{flex:1 1 auto}.tools input[type=date]{flex:1 1 100%}
+
+  /* Acceso */
+  #auth{min-height:100dvh;padding:.8rem}
+  .auth-card{padding:1.4rem}
+
+  /* Tarjetas de resumen: dos por fila, la principal a ancho completo */
+  .kpis{grid-template-columns:1fr 1fr;gap:.6rem;margin-bottom:1.1rem}
+  .k{padding:.8rem .9rem}.k div{font-size:1.15rem}
+  .k:last-child{grid-column:1/-1;padding:1.1rem 1.2rem}.k:last-child div{font-size:2rem}
+  .k:nth-child(5):nth-last-child(2){grid-column:1/-1}
+
+  /* Cajas y gráficas */
+  .box{padding:1rem;margin-bottom:1rem}
+  .grid2{gap:1rem}.grid2+.box{margin-top:1rem}
+
+  /* Tablas -> tarjetas */
+  table{min-width:0;display:block}
+  tbody{display:block}
+  tr.hr{display:none}
+  tr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.5fr) minmax(0,1fr);gap:.55rem .6rem;padding:.9rem 1rem;margin-bottom:.7rem;border:1px solid var(--line);border-radius:12px;background:#fff}
+  tr:last-child{margin-bottom:0}
+  tr.vacio{border:0;padding:.2rem 0;background:none}
+  td{display:block;padding:0;border:0;min-width:0;overflow-wrap:anywhere}
+  td[data-l]::before{content:attr(data-l);display:block;color:var(--mut);font-weight:600;font-size:.76rem;margin-bottom:1px}
+  td:first-child,td:last-child,td.full,td[colspan]{grid-column:1/-1}
+  td:first-child{font-size:1.02rem}
+  td:first-child::before{display:none}
+  td.full .bar{margin-top:4px}
+  td label{font-weight:400;font-size:.85rem;margin-top:2px}
+  td .acts{display:grid;grid-template-columns:1fr 1fr;gap:.4rem}
+  td .acts button{min-height:40px;padding:.45rem .5rem}
+  tbody tr:hover td{background:none}
+  /* Estados: el color pasa de la fila entera a la tarjeta */
+  tr.over{background:var(--bad-soft)!important;border-left:4px solid var(--bad)!important}
+  tr.warn{border-left:4px solid var(--warn)!important}
+  tr.over td{background:none!important}
+  tr.over td:first-child,tr.warn td:first-child{box-shadow:none}
+  /* Detalle de gastos desplegable, pegado a su tarjeta */
+  tr.movs{display:block;margin:-.4rem 0 .7rem;padding:.3rem 1rem .5rem;background:#f8f9fc;border-radius:0 0 12px 12px}
+  tr.movs td{padding:0;background:none!important}
+  .mv{grid-template-columns:auto 1fr;grid-template-areas:"d i" "n n" "a a";gap:.2rem .7rem}
+  .mv>:nth-child(1){grid-area:d}.mv>:nth-child(2){grid-area:i;text-align:right}.mv>:nth-child(3){grid-area:n;order:0}.mv>:nth-child(4){grid-area:a;justify-content:flex-end}
+  .mv .acts{display:flex}.mv .acts button{min-height:36px;padding:.3rem .8rem}
+
+  /* Ranking: puesto a la izquierda, usuario y cifras a la derecha */
+  #tR tr{grid-template-columns:1.8rem repeat(3,minmax(0,1fr))}
+  #tR td::before{white-space:nowrap;font-size:.7rem}
+  #tR td:nth-child(2)::before{display:none}
+  #tR td:nth-child(1){grid-column:1;grid-row:1/3;font-size:1.3rem;font-weight:800;color:var(--acc)}
+  #tR td:nth-child(2){grid-column:2/-1;font-size:1.02rem}
+  #tR td:nth-child(n+3){grid-column:auto}
+  #tR td:last-child{grid-column:auto}
+  #tR tr.vacio{display:block}
+
+  /* Diálogos */
+  dialog{width:calc(100vw - 1.5rem);max-height:90dvh;overflow:auto;padding:1.3rem}
+  .conf{max-width:none}
+}
