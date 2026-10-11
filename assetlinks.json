@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "app.netlify.cuentasclaras123.twa",
+        "sha256_cert_fingerprints": ["01:0E:15:DF:CA:3E:DA:C1:1F:26:73:82:C8:C8:8D:4B:16:EE:C2:CF:CC:E0:F1:5D:25:F5:13:7A:BF:BF:50:DB"]
+      }
+    }]
